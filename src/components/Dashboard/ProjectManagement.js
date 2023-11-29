@@ -19,6 +19,8 @@ const style = {
   p: 4,
 };
 
+console.log("Kabir");
+
 const ProjectManagement = () => {
   const tableTemplate = {
     columns: [
