@@ -1,16 +1,15 @@
 const express = require("express");
 const cors = require("cors");
-const server = express();
-const { db } = require("./connection/db");
 const UserRoutes = require("./routes/UserRoutes");
-const ProjectRoute = require("./routes/ProjectRoute");
+const ProjectRoutes = require("./routes/ProjectRoute");
+
+const server = express();
 
 server.use(cors());
 
 // routes
 server.use("/api/User", UserRoutes);
-
-server.use("/api/Project", ProjectRoute);
+server.use("/api/Project", ProjectRoutes);
 
 server.listen(8080, () => {
   console.log("Server Started");
