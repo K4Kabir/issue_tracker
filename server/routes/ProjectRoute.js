@@ -2,39 +2,44 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
+const upload = require("../middleware/multer.middleware");
+const uploadCloud = require("../utils/Cloudinary");
 
 router.use(bodyParser.json());
 const prisma = new PrismaClient();
 
-router.post("/createProject", async (req, res) => {
+router.post("/save", upload.single("image"), async (req, res) => {
   try {
-    //const { name, password, userId } = req.body;
-    // const checkProject = await prisma.project.findUnique({
-    //   where: {
-    //     name: "Test",
-    //   },
-    // });
-    // if (checkProject) {
-    //   res.status(200).json({
-    //     message:
-    //       "The project name is already taken Please choose differenct one!",
-    //     success: false,
-    //   });
-    // }
+    const { name, password, assign, description } = req.body;
+    console.log(JSON.parse(assign), "ASS");
+    const checkProject = await prisma.project.findUnique({
+      where: {
+        name,
+      },
+    });
+    if (checkProject) {
+      res.status(200).json({
+        message:
+          "The project name is already taken Please choose differenct one!",
+        success: false,
+      });
+    }
+    // Upload Image logic
+    const image = req.file;
+    const response = await uploadCloud.uploadOnCloudinary(image.path);
+
+    if (!response) {
+      res.json(400).json({ message: "Error While Connecting to Cloudinary" });
+    }
 
     const newProject = await prisma.project.create({
       data: {
-        name: "NH Test",
-        password: "test_password",
+        name: name,
+        password: password,
+        image: response.url,
+        description: description,
         members: {
-          create: [
-            {
-              userId: 4,
-            },
-            {
-              userId: 5,
-            },
-          ],
+          create: [...JSON.parse(assign)],
         },
       },
     });
