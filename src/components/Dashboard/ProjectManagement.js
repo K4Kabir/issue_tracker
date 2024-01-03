@@ -91,11 +91,12 @@ const ProjectManagement = () => {
       },
     });
     if (response.data.success) {
-      toast.success(response.data.message);
+      toast.success("Project Created Successfully");
       getAll();
     } else {
       toast.error(response.data.message);
     }
+    setData({});
     handleClose();
   };
 
@@ -107,7 +108,7 @@ const ProjectManagement = () => {
 
   const handleDelete = async (data) => {
     let response = await jwtAxios.post("/Project/deleteProject", {
-      id: data._id,
+      id: data.id,
     });
     if (response.data.success) {
       toast.success(response.data.message);

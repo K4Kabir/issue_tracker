@@ -8,6 +8,30 @@ const jwtAxios = axios.create({
   },
 });
 
+var loader = document.getElementsByClassName("loader_back");
+jwtAxios.interceptors.request.use(
+  function (config) {
+    loader[0].style.display = "block";
+    return config;
+  },
+  function (error) {
+    loader[0].style.display = "none";
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+jwtAxios.interceptors.response.use(
+  function (response) {
+    loader[0].style.display = "none";
+    return response;
+  },
+  function (error) {
+    loader[0].style.display = "none";
+    return Promise.reject(error);
+  }
+);
+
 export const setAuthToken = (token) => {
   if (token) {
     jwtAxios.defaults.headers.common["Authorization"] = token;

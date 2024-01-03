@@ -52,6 +52,18 @@ router.post("/save", upload.single("image"), async (req, res) => {
   }
 });
 
+router.post("/deleteProject", async (req, res) => {
+  const { id } = req.body;
+  const deletedProject = await prisma.project.delete({
+    where: {
+      id,
+    },
+  });
+  if (deletedProject) {
+    res.status(200).json({ message: "Deleted Successfully", success: true });
+  }
+});
+
 router.get("/getAll", async (req, res) => {
   const project = await prisma.project.findMany({
     select: {

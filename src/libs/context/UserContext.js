@@ -1,14 +1,13 @@
 import { createContext, useEffect, useState } from "react";
 import jwtAxios from "../jwtAxios/jwtAxios";
 import { setAuthToken } from "../jwtAxios/jwtAxios";
-import { toast } from "sonner";
-import { redirect } from "react-router-dom";
 
 export const User = createContext();
 
 const UserContext = ({ children }) => {
   console.log(children);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let token = localStorage.getItem("token");
