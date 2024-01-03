@@ -19,8 +19,6 @@ const style = {
   p: 4,
 };
 
-console.log("Kabir");
-
 const ProjectManagement = () => {
   const tableTemplate = {
     columns: [
@@ -73,10 +71,17 @@ const ProjectManagement = () => {
   };
 
   const handleSubmit = async () => {
+    const userArray = [];
+
+    selected.forEach((el) => {
+      userArray.push({ userId: el.id });
+    });
+
     let formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("assign", JSON.stringify(selected.map((el) => el.id)));
+    formData.append("assign", JSON.stringify(userArray));
+    formData.append("password", data.password);
     formData.append("image", file);
     let response = await jwtAxios("/Project/save", {
       method: "POST",
@@ -166,7 +171,7 @@ const ProjectManagement = () => {
         }}
         title="Onboard Tenants List"
         columns={tableTemplate.columns}
-        data={tableData}
+        data={tableData || []}
         options={{
           search: false,
           showTitle: false,
@@ -238,6 +243,16 @@ const ProjectManagement = () => {
                 value={data.description}
               />
             </Box>
+            <Box sx={{ mt: 3 }}>
+              <TextField
+                name="password"
+                onChange={(e) => handleInput(e)}
+                fullWidth
+                type="password"
+                label="Password for the project"
+                value={data.password}
+              />
+            </Box>
             <Box sx={{ display: "flex", mt: 3 }}>
               <input
                 onChange={(e) => {
@@ -262,7 +277,6 @@ const ProjectManagement = () => {
               <Autocomplete
                 name="assign"
                 onChange={(e, val) => {
-                  console.log(val);
                   setSelected(val);
                 }}
                 multiple
