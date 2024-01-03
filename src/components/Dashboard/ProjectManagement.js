@@ -133,7 +133,7 @@ const ProjectManagement = () => {
       if (response.data.success) {
         let temp = [];
         response.data.message.map((el) => {
-          temp.push({ label: `${el.email}  (${el.role})`, id: el._id });
+          temp.push({ label: `${el.username}  (${el.role})`, id: el.id });
           setAllUsers(temp);
         });
       } else {
@@ -262,6 +262,7 @@ const ProjectManagement = () => {
               <Autocomplete
                 name="assign"
                 onChange={(e, val) => {
+                  console.log(val);
                   setSelected(val);
                 }}
                 multiple

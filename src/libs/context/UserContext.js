@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import jwtAxios from "../jwtAxios/jwtAxios";
 import { setAuthToken } from "../jwtAxios/jwtAxios";
+import { toast } from "sonner";
+import { redirect } from "react-router-dom";
 
 export const User = createContext();
 
@@ -21,20 +23,23 @@ const UserContext = ({ children }) => {
   const SignIn = async (data) => {
     let response = await jwtAxios.post("/User/login", data);
     if (response.data.success) {
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.message);
       setAuthToken(response.data.token);
-      return response.data.message;
-    } else {
-      return response.data.message;
     }
+    return response;
   };
 
   const getUserDetails = async () => {
-    let response = await jwtAxios.get("/User/getUserProfile");
-    if (response.data.success) {
-      setUser(response.data.message);
-    } else {
-      setUser(null);
+    try {
+      let response = await jwtAxios.get("/User/getUserProfile");
+      if (response.data.success) {
+        setUser(response.data.message);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      localStorage.removeItem("token");
+      window.location.reload();
     }
   };
 

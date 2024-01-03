@@ -61,13 +61,15 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!data.email || !data.password) {
+    if (!data.username || !data.password) {
       return;
     }
     const response = await SignIn(data);
-    if (response) {
-      toast.success(response);
+    if (response.data.success) {
+      toast.success("Login Success");
       window.location.reload();
+    } else {
+      toast.error(response.data.message);
     }
   };
 
@@ -102,9 +104,8 @@ export default function Register() {
                   onChange={(e) => handleInput(e)}
                   fullWidth
                   id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  label="Username"
+                  name="username"
                 />
               </Grid>
               <Grid item xs={12}>

@@ -50,12 +50,12 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!data.email || !data.password || !data.role) {
+    if (!data.username || !data.password || !data.role) {
       return;
     } else {
-      let response = await jwtAxios.post("/User/createUser", data);
+      let response = await jwtAxios.post("/User/register", data);
       if (response.data.success) {
-        toast.success(response.data.message);
+        toast.success("User Created Successfully");
       } else {
         toast.error(response.data.message);
       }
@@ -94,7 +94,7 @@ export default function Register() {
                   fullWidth
                   id="email"
                   label="Email Address"
-                  name="email"
+                  name="username"
                   autoComplete="email"
                 />
               </Grid>

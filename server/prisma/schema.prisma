@@ -20,11 +20,12 @@ model User {
 }
 
 model Project {
-  id       Int              @id @default(autoincrement())
-  name     String
-  password String
-  image    String?
-  members  ProjectMembers[]
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String?
+  password    String
+  image       String?
+  members     ProjectMembers[]
 }
 
 model ProjectMembers {

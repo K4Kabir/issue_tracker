@@ -20,10 +20,14 @@ const Home = () => {
 
   useEffect(() => {
     const getProjects = async function () {
-      let response = await jwtAxios.get(`/Project/getAssingedProjects`);
-      if (response.data.success) {
-        setProjects(response.data.message);
-      } else {
+      try {
+        let response = await jwtAxios.get(`/Project/getAssingedProjects`);
+        if (response.data.success) {
+          setProjects(response.data.message);
+        } else {
+          setProjects([]);
+        }
+      } catch (error) {
         setProjects([]);
       }
     };
@@ -36,7 +40,7 @@ const Home = () => {
       <Button onClick={Logout} variant="contained">
         Logout
       </Button>
-      <Box sx={{ p: 10  }}>
+      <Box sx={{ p: 10 }}>
         <Grid container spacing={2}>
           {projects.map((el, index) => {
             return (

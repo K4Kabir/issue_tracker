@@ -47,6 +47,18 @@ router.post("/createProject", async (req, res) => {
   }
 });
 
+router.get("/getAll", async (req, res) => {
+  const project = await prisma.project.findMany({
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      description: true,
+    },
+  });
+  project && res.status(200).json({ message: project, success: true });
+});
+
 router.post("/getProjectById", async (req, res) => {
   const { id } = req.body;
   const project = await prisma.project.findUnique({
