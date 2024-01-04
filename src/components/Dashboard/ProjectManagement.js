@@ -53,6 +53,8 @@ const ProjectManagement = () => {
     setOpen(false);
     setFile(null);
     setImg(null);
+    setSelected([]);
+    setData({});
   };
   const [data, setData] = useState({});
   const [selected, setSelected] = useState([]);
@@ -101,10 +103,33 @@ const ProjectManagement = () => {
   };
 
   const handleClickEdit = async (data) => {
-    setData(data);
-    setImg(data.image);
-    handleOpen();
+    const password = prompt("Please provide the password for the access!");
+    if (!password) {
+      return;
+    }
+    let response = await jwtAxios.post("/Project/getProjectById", {
+      id: data.id,
+      password: password,
+    });
+    if (response.data.success) {
+      let temp = [];
+      response.data.message.members.map((el) => {
+        temp.push({
+          label: `${el.user.username}  (${el.user.role})`,
+          id: el.user.id,
+        });
+      });
+      setSelected(temp);
+      setData(response.data.message);
+      setImg(response.data.message.image);
+
+      handleOpen();
+    } else {
+      toast.error(response.data.message);
+    }
   };
+
+  console.log(selected);
 
   const handleDelete = async (data) => {
     let response = await jwtAxios.post("/Project/deleteProject", {
@@ -284,8 +309,8 @@ const ProjectManagement = () => {
                 id="tags-standard"
                 options={allUsers}
                 value={selected}
-                //getOptionLabel={(option) => option.title}
-                // defaultValue={[top100Films[13]]}
+                defaultValue={selected}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
                     {...params}

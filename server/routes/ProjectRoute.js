@@ -77,7 +77,7 @@ router.get("/getAll", async (req, res) => {
 });
 
 router.post("/getProjectById", async (req, res) => {
-  const { id } = req.body;
+  const { id, password } = req.body;
   const project = await prisma.project.findUnique({
     where: {
       id,
@@ -86,6 +86,8 @@ router.post("/getProjectById", async (req, res) => {
       id: true,
       name: true,
       image: true,
+      description: true,
+      password: true,
       members: {
         include: {
           user: {
@@ -100,6 +102,15 @@ router.post("/getProjectById", async (req, res) => {
       },
     },
   });
+  const checkPass = await prisma.project.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (checkPass.password != password) {
+    res.status(200).json({ message: "Invalid Password", success: false });
+    return;
+  }
   if (project) {
     res.status(200).json({ message: project, success: true });
   }
