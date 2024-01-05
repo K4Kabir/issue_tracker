@@ -8,15 +8,23 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React, { useContext } from "react";
-import { User } from "../../libs/context/UserContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import jwtAxios from "../../libs/jwtAxios/jwtAxios";
 
 const Home = () => {
-  const [projects, setProjects] = useState([]);
-  const { Logout } = useContext(User);
+  const [projects, setProjects] = useState([
+    {
+      name: "Test Project",
+      image:
+        "https://images.pexels.com/photos/5852610/pexels-photo-5852610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    },
+    {
+      name: "Test Project",
+      image:
+        "https://images.pexels.com/photos/5852610/pexels-photo-5852610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    },
+  ]);
 
   useEffect(() => {
     const getProjects = async function () {
@@ -25,9 +33,11 @@ const Home = () => {
         if (response.data.success) {
           setProjects(response.data.message);
         } else {
+          return;
           setProjects([]);
         }
       } catch (error) {
+        return;
         setProjects([]);
       }
     };
@@ -36,15 +46,11 @@ const Home = () => {
 
   return (
     <div>
-      Home
-      <Button onClick={Logout} variant="contained">
-        Logout
-      </Button>
       <Box sx={{ p: 10 }}>
         <Grid container spacing={2}>
           {projects.map((el, index) => {
             return (
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 <Card key={index} sx={{ maxWidth: 345 }}>
                   <CardActionArea>
                     <CardMedia

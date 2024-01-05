@@ -116,4 +116,14 @@ router.post("/getProjectById", async (req, res) => {
   }
 });
 
+router.get("/getAssingedProjects", async (req, res) => {
+  const token = req.header("authorization");
+  if (!token) {
+    res
+      .status(200)
+      .json({ message: "Please provide the token", success: false });
+    return;
+  }
+});
+
 module.exports = router;

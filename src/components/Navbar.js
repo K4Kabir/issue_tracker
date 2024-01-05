@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { User } from "../libs/context/UserContext";
-import { Avatar, Box, Link } from "@mui/material";
+import { Avatar, Box, Button, Link } from "@mui/material";
 
 const Navbar = () => {
-  const { user } = useContext(User);
+  const { user, Logout } = useContext(User);
 
   return (
     <Box
@@ -15,9 +15,14 @@ const Navbar = () => {
         height: "50px",
       }}
     >
-      <Box sx={{ ml: 3 }}>{user?.email}</Box>
-      <Box sx={{ mr: 3, display: "flex", alignItems: "center" }}>
+      <Box sx={{ ml: 3, color: "white", fontWeight: 700 }}>
+        WELCOME {user?.username.toUpperCase()}
+      </Box>
+      <Box sx={{ mr: 3, display: "flex", alignItems: "center", gap: "30px" }}>
         <Link href="/projectManagement">Project Management</Link>
+        <Button variant="contained" onClick={Logout}>
+          Logout
+        </Button>
         <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
       </Box>
     </Box>
