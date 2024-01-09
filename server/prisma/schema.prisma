@@ -11,12 +11,15 @@ datasource db {
 }
 
 model User {
-  id       Int              @id @default(autoincrement())
-  username String           @unique
-  password String
-  image    String?
-  role     String
-  projects ProjectMembers[]
+  id         Int              @id @default(autoincrement())
+  username   String           @unique
+  password   String
+  image      String?
+  role       String
+  projects   ProjectMembers[]
+  assignedTo Issue[] // User can be assigned to multiple issues
+
+  @@index([id], name: "assignedTo_idx")
 }
 
 model Project {
@@ -26,6 +29,7 @@ model Project {
   password    String
   image       String?
   members     ProjectMembers[]
+  issues      Issue[]
 }
 
 model ProjectMembers {
@@ -36,4 +40,15 @@ model ProjectMembers {
   user    User    @relation(fields: [userId], references: [id])
 
   @@id([projectId, userId])
+}
+
+model Issue {
+  id            Int     @id @default(autoincrement())
+  title         String
+  description   String?
+  image         String?
+  projectId     Int
+  assignedUsers User[] // Multiple users can be assigned to an issue
+
+  project Project @relation(fields: [projectId], references: [id])
 }

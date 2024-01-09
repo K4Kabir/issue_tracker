@@ -124,6 +124,7 @@ router.get("/getAssingedProjects", async (req, res) => {
       .json({ message: "Please provide the token", success: false });
     return;
   }
+  res.status(400).json({ message: [], success: true });
 });
 
 module.exports = router;

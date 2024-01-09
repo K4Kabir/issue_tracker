@@ -89,6 +89,7 @@ router.post("/getAllUsers", async (req, res) => {
   const checkToken = jwt.verify(token, "KABIR");
   if (!checkToken) {
     res.status(200).json({ message: "Token expired", success: false });
+    return;
   }
   const user = await prisma.user.findMany({
     where: {
