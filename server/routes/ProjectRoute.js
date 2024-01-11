@@ -116,6 +116,7 @@ router.post("/getProjectById", async (req, res) => {
   }
 });
 
+// Get assinged projects with the available issues.
 router.get("/getAssingedProjects", async (req, res) => {
   const token = req.header("authorization");
   if (!token) {

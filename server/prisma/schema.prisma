@@ -17,7 +17,7 @@ model User {
   image      String?
   role       String
   projects   ProjectMembers[]
-  assignedTo Issue[] // User can be assigned to multiple issues
+  assignedTo Issue[] // User can be assigned to multiple issues no matter in how many issues are assigned to them
 
   @@index([id], name: "assignedTo_idx")
 }
@@ -43,12 +43,14 @@ model ProjectMembers {
 }
 
 model Issue {
-  id            Int     @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   title         String
   description   String?
   image         String?
   projectId     Int
+  status        String   @default("PENDING")
   assignedUsers User[] // Multiple users can be assigned to an issue
-
-  project Project @relation(fields: [projectId], references: [id])
+  project       Project  @relation(fields: [projectId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
