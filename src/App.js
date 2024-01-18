@@ -7,6 +7,8 @@ import ProjectManagement from "./components/Dashboard/ProjectManagement";
 import { useContext } from "react";
 import { User } from "./libs/context/UserContext";
 import Loader from "./components/Loader";
+import Issues from "./components/Dashboard/Issues/Issues";
+import Create from "./components/Dashboard/Issues/Create";
 
 function App() {
   const { loading } = useContext(User);
@@ -21,6 +23,8 @@ function App() {
             path={"/projectManagement"}
             exact
           />
+          <Route path="/project/:projectId" element={<Issues />} />
+          <Route path="/createIssue" element={<Create />} />
         </Route>
         <Route element={<Login />} path={"/login"} exact />
         <Route element={<Register />} path={"/register"} exact />

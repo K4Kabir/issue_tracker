@@ -7,7 +7,6 @@ export const User = createContext();
 const UserContext = ({ children }) => {
   console.log(children);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let token = localStorage.getItem("token");

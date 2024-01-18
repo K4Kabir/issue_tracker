@@ -5,26 +5,18 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Chip,
   Grid,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { useEffect } from "react";
 import jwtAxios from "../../libs/jwtAxios/jwtAxios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [projects, setProjects] = useState([
-    {
-      name: "Test Project",
-      image:
-        "https://images.pexels.com/photos/5852610/pexels-photo-5852610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-      name: "Test Project",
-      image:
-        "https://images.pexels.com/photos/5852610/pexels-photo-5852610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-  ]);
+  const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getProjects = async function () {
@@ -33,11 +25,9 @@ const Home = () => {
         if (response.data.success) {
           setProjects(response.data.message);
         } else {
-          return;
           setProjects([]);
         }
       } catch (error) {
-        return;
         setProjects([]);
       }
     };
@@ -51,23 +41,36 @@ const Home = () => {
           {projects.map((el, index) => {
             return (
               <Grid item xs={3}>
-                <Card key={index} sx={{ maxWidth: 345 }}>
+                <Card
+                  onClick={() => navigate(`/project/${el.projectId}`)}
+                  key={index}
+                  sx={{ maxWidth: 345 }}
+                >
                   <CardActionArea>
                     <CardMedia
                       component="img"
                       height="140"
-                      image={el.image}
+                      image={el.project.image}
                       alt="green iguana"
                     />
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
-                        {el.name}
+                        {el.project.name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Lizards are a widespread group of squamate reptiles,
-                        with over 6,000 species, ranging across all continents
-                        except Antarctica
+                        {el?.project.description}
                       </Typography>
+                      <Chip
+                        sx={{ mt: 3 }}
+                        label={
+                          (el?.project.issues.length || 0) +
+                          " " +
+                          "Issues Found"
+                        }
+                        color={
+                          el?.project.issues.length == 0 ? "success" : "error"
+                        }
+                      />
                     </CardContent>
                   </CardActionArea>
                 </Card>

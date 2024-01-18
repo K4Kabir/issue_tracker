@@ -4,6 +4,7 @@ const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const upload = require("../middleware/multer.middleware");
 const uploadCloud = require("../utils/Cloudinary");
+const jwt = require("jsonwebtoken");
 
 router.use(bodyParser.json());
 const prisma = new PrismaClient();
@@ -125,7 +126,54 @@ router.get("/getAssingedProjects", async (req, res) => {
       .json({ message: "Please provide the token", success: false });
     return;
   }
-  res.status(400).json({ message: [], success: true });
+  const checkToken = jwt.verify(token, "KABIR");
+  if (!checkToken) {
+    res.status(200).json({
+      message: "JWT token is not valid Please Login again",
+      success: false,
+    });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      username: checkToken.data,
+    },
+  });
+
+  if (!user) {
+    res.status(200).json({ message: "User not found", success: false });
+  }
+
+  let data = [];
+
+  if (user.role == "Admin" || user.role == "Tester") {
+    data = await prisma.projectMembers.findMany({
+      where: { userId: user.id },
+      include: {
+        project: {
+          include: {
+            issues: true,
+          },
+        },
+      },
+    });
+  } else {
+    data = await prisma.projectMembers.findMany({
+      where: { userId: user.id },
+      include: {
+        project: {
+          include: {
+            issues: {
+              where: { assignedUsers: { some: { id: user.id } } },
+            },
+          },
+        },
+      },
+    });
+  }
+  if (data) {
+    res.status(200).json({ message: data, success: true });
+  }
 });
 
 module.exports = router;
