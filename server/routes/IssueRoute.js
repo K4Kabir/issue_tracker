@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 
 router.post("/createIssue", async (req, res) => {
   const { title, description, projectId, assignedUsers } = req.body;
-  const assignedUserIds = [4, 5];
 
   const newIssue = await prisma.issue.create({
     data: {

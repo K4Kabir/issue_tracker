@@ -26,6 +26,7 @@ const Issues = () => {
             navigate("/createIssue", {
               state: {
                 mode: "add",
+                projectId,
               },
             })
           }
