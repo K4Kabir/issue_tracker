@@ -15,14 +15,14 @@ router.post("/createIssue", async (req, res) => {
     data: {
       title,
       description,
-      projectId,
+      projectId: parseInt(projectId),
       assignedUsers: {
-        connect: assignedUsers.map((userId) => ({ id: userId })),
+        connect: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
       },
     },
   });
   if (newIssue) {
-    res.status(200).json({ message: newIssue, status: true });
+    res.status(200).json({ message: newIssue, success: true });
   }
 });
 
@@ -79,6 +79,58 @@ router.post("/getIssueByProjectId", async (req, res) => {
   }
   if (Issue) {
     res.status(200).json({ message: Issue, success: true });
+  }
+});
+
+router.post("/getAllUserForIssue", async (req, res) => {
+  const { projectId } = req.body;
+  const token = req.header("authorization");
+
+  if (!token) {
+    res
+      .status(200)
+      .json({ message: "Please provide the token", success: false });
+    return;
+  }
+  const checkToken = jwt.verify(token, "KABIR");
+
+  if (!checkToken) {
+    res.status(200).json({
+      message: "JWT token is not valid Please Login again",
+      success: false,
+    });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      username: checkToken.data,
+    },
+  });
+
+  const projectWithUsers = await prisma.project.findUnique({
+    where: { id: parseInt(projectId) },
+    include: {
+      members: {
+        where: {
+          userId: {
+            not: user.id,
+          },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              role: true,
+              image: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (projectWithUsers) {
+    res.status(200).json({ message: projectWithUsers, success: true });
   }
 });
 
