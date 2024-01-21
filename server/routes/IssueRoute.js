@@ -26,6 +26,18 @@ router.post("/createIssue", async (req, res) => {
   }
 });
 
+router.post("/deleteIssue", async (req, res) => {
+  const { id } = req.body;
+  const deleted = await prisma.issue.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
+  if (deleted) {
+    res.status(200).json({ message: "Deleted Successfully", success: true });
+  }
+});
+
 router.post("/getIssueByProjectId", async (req, res) => {
   const { projectId } = req.body;
 
@@ -60,7 +72,11 @@ router.post("/getIssueByProjectId", async (req, res) => {
         id: projectId,
       },
       include: {
-        issues: true,
+        issues: {
+          include: {
+            assignedUsers: true,
+          },
+        },
       },
     });
   } else {
@@ -72,6 +88,9 @@ router.post("/getIssueByProjectId", async (req, res) => {
         issues: {
           where: {
             assignedUsers: { some: { id: user.id } },
+          },
+          include: {
+            assignedUsers: true,
           },
         },
       },

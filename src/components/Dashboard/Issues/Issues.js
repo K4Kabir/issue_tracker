@@ -17,6 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import jwtAxios from "../../../libs/jwtAxios/jwtAxios";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
+import DeleteModal from "../Modals/Delete";
 
 const Issues = () => {
   const [page, setPage] = useState(0);
@@ -25,6 +26,9 @@ const Issues = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [issues, setIssues] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState("");
+  const [selection, setSelection] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,8 +58,20 @@ const Issues = () => {
     getAllIssues();
   }, []);
 
+  const handleDeleteIssue = (el) => {
+    setId(el.id);
+    setOpen(true);
+  };
+
   return (
     <Box>
+      <DeleteModal
+        title={"Are you sure you want to Delete this Issue"}
+        open={open}
+        content={"You will not able to revert this!"}
+        setOpen={setOpen}
+        api={{ url: "/Issue/deleteIssue", data: id }}
+      />
       <Box sx={{ display: "flex", justifyContent: "flex-end", m: 4 }}>
         <Button
           onClick={() =>
@@ -83,11 +99,13 @@ const Issues = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell></TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Image</TableCell>
                 <TableCell>Created At</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Assigned User</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
@@ -97,6 +115,20 @@ const Issues = () => {
                 .map((el, index) => {
                   return (
                     <TableRow key={index}>
+                      <TableCell>
+                        <input
+                          onChange={(e) => {
+                            if (selection.includes(el.id)) {
+                              let temp = selection;
+                              let result = temp.filter((f) => f !== el.id);
+                              setSelection(result);
+                            } else {
+                              setSelection((prev) => [...prev, el.id]);
+                            }
+                          }}
+                          type="checkbox"
+                        />
+                      </TableCell>
                       <TableCell>{el.title}</TableCell>
                       <TableCell>{el.description}</TableCell>
                       <TableCell>
@@ -116,11 +148,29 @@ const Issues = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        <Box>
-                          <IconButton>
+                        {el.assignedUsers?.map((user, index) => {
+                          return (
+                            <Box sx={{ display: "flex", gap: "5px" }}>
+                              <Chip
+                                sx={{ m: 1 }}
+                                key={index}
+                                label={user.username}
+                                color="primary"
+                                variant="outlined"
+                              />
+                            </Box>
+                          );
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{}}>
+                          <IconButton
+                            disabled={selection.length}
+                            onClick={() => handleDeleteIssue(el)}
+                          >
                             <DeleteTwoToneIcon />
                           </IconButton>
-                          <IconButton>
+                          <IconButton disabled={selection.length}>
                             <VisibilityTwoToneIcon />
                           </IconButton>
                         </Box>
