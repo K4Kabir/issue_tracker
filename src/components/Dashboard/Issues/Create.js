@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   IconButton,
   Paper,
   TextField,
@@ -37,21 +38,42 @@ const Create = () => {
   };
 
   const handleSave = async function () {
+    let url = "";
+    if (state.mode == "add") {
+      url = "/Issue/createIssue";
+    } else {
+      url = "Issue/updateIssue";
+    }
     let result = [];
     selected.map((el) => result.push(el.id));
     let formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("projectId", state.projectId);
-    formData.append("assignedUsers", JSON.stringify(result));
-    formData.append("image", file);
-    let response = await jwtAxios.post("/Issue/createIssue", formData);
+    if (state.mode == "add") {
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("projectId", state.projectId);
+      formData.append("assignedUsers", JSON.stringify(result));
+      formData.append("image", file);
+    } else {
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("projectId", state.projectId);
+      formData.append("assignedUsers", JSON.stringify(result));
+      formData.append("image", file);
+      formData.append("id", state.issueId);
+    }
+    let response = await jwtAxios.post(url, formData);
     if (response.data.success) {
-      toast.success("Issue assinged successfully");
+      toast.success(
+        state.mode == "add"
+          ? "Issue assinged successfully"
+          : "Update Successfully"
+      );
     } else {
       toast.error(response.data.message);
     }
   };
+
+  console.log(selected, "SELECTED");
 
   useEffect(() => {
     const getAllUsers = function () {
@@ -73,9 +95,39 @@ const Create = () => {
     getAllUsers();
   }, []);
 
+  useEffect(() => {
+    const getById = async function () {
+      let response = await jwtAxios.post("/Issue/getIssueById", {
+        id: state.issueId,
+      });
+      if (response.data.success) {
+        setData(response.data.message);
+        let temp = [];
+        response.data.message.assignedUsers.map((el) => {
+          temp.push({
+            label: `${el.username}  (${el.role})`,
+            id: el.id,
+          });
+          setSelected(temp);
+        });
+      }
+    };
+    if (state.mode == "update" || state.mode == "view") {
+      getById();
+    }
+  }, [state.mode]);
+
   return (
     <Box sx={{ p: 8 }}>
       <Paper sx={{ p: 3 }} elevation={3}>
+        {state.mode != "add" && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Chip
+              label={data.status}
+              color={data.status == "PENDING" ? "error" : "primary"}
+            />
+          </Box>
+        )}
         <Box>
           <Typography sx={{ fontSize: "25px", fontWeight: 600 }}>
             {state.mode === "add"
@@ -88,24 +140,35 @@ const Create = () => {
           <Box sx={{ mt: 2 }}>
             <TextField
               name="title"
+              InputLabelProps={{
+                shrink: true,
+              }}
               onChange={(e) => handleInput(e)}
               fullWidth
               type="text"
+              value={data.title}
               label="Title"
             />
           </Box>
           <Box sx={{ mt: 2 }}>
             <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
               name="description"
               onChange={(e) => handleInput(e)}
               fullWidth
               type="textarea"
+              value={data.description}
               label="Description"
             />
           </Box>
 
           <Box sx={{ mt: 2 }}>
             <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
               fullWidth
               disabled
               name="projectId"
@@ -167,7 +230,7 @@ const Create = () => {
               options={allUsers}
               value={selected}
               defaultValue={selected}
-              //isOptionEqualToValue={(option, value) => option.id === value.id}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -177,9 +240,26 @@ const Create = () => {
               )}
             />
           </Box>
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              justifyContent: "center",
+              gap: "5px",
+            }}
+          >
             <Button onClick={handleSave} variant="contained">
-              Save
+              {state.mode == "add"
+                ? "Save"
+                : state.mode == "update"
+                ? "Update"
+                : ""}
+            </Button>
+            <Button color="success" variant="outlined">
+              Mark As Close
+            </Button>
+            <Button color="warning" variant="outlined">
+              Mark As Reopen
             </Button>
           </Box>
         </Box>

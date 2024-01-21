@@ -26,6 +26,33 @@ router.post("/createIssue", async (req, res) => {
   }
 });
 
+router.post("/updateIssue", async (req, res) => {
+  const { title, description, projectId, assignedUsers, status, id } = req.body;
+
+  const newIssue = await prisma.issue.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      title,
+      description,
+      projectId: parseInt(projectId),
+      status: status,
+      assignedUsers: {
+        connect: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
+      },
+      disconnect: {
+        id: {
+          notIn: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
+        },
+      },
+    },
+  });
+  if (newIssue) {
+    res.status(200).json({ message: newIssue, success: true });
+  }
+});
+
 router.post("/deleteIssue", async (req, res) => {
   const { id } = req.body;
   const deleted = await prisma.issue.delete({
@@ -150,6 +177,42 @@ router.post("/getAllUserForIssue", async (req, res) => {
   });
   if (projectWithUsers) {
     res.status(200).json({ message: projectWithUsers, success: true });
+  }
+});
+
+router.post("/getIssueById", async (req, res) => {
+  const { id } = req.body;
+  const token = req.header("authorization");
+
+  if (!token) {
+    res
+      .status(200)
+      .json({ message: "Please provide the token", success: false });
+    return;
+  }
+  const checkToken = jwt.verify(token, "KABIR");
+
+  if (!checkToken) {
+    res.status(200).json({
+      message: "JWT token is not valid Please Login again",
+      success: false,
+    });
+  }
+
+  const issue = await prisma.issue.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      assignedUsers: true,
+    },
+  });
+  if (issue) {
+    let final = issue.assignedUsers.filter(
+      (f) => f.username !== checkToken.username
+    );
+    issue.assignedUsers = final;
+    res.status(200).json({ message: issue, success: true });
   }
 });
 

@@ -171,7 +171,17 @@ const Issues = () => {
                             <DeleteTwoToneIcon />
                           </IconButton>
                           <IconButton disabled={selection.length}>
-                            <VisibilityTwoToneIcon />
+                            <VisibilityTwoToneIcon
+                              onClick={() =>
+                                navigate("/createIssue", {
+                                  state: {
+                                    mode: "update",
+                                    projectId,
+                                    issueId: el.id,
+                                  },
+                                })
+                              }
+                            />
                           </IconButton>
                         </Box>
                       </TableCell>
