@@ -143,7 +143,13 @@ const Issues = () => {
                       <TableCell>
                         <Chip
                           label={el.status}
-                          color={el.status === "PENDING" ? "error" : "success"}
+                          color={
+                            el.status === "PENDING"
+                              ? "error"
+                              : el.status == "REOPENED"
+                              ? "warning"
+                              : "success"
+                          }
                           variant="outlined"
                         />
                       </TableCell>

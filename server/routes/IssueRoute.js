@@ -41,22 +41,36 @@ router.post("/createIssue", upload.single("image"), async (req, res) => {
   }
 });
 
-router.post("/updateIssue", async (req, res) => {
-  const { title, description, projectId, assignedUsers, status, id } = req.body;
+router.post("/updateIssue", upload.single("image"), async (req, res) => {
+  const { title, description, projectId, assignedUsers, id } = req.body;
 
+  const image = req.file;
+  let response = {
+    url: null,
+  };
+  if (req.file !== undefined) {
+    response = await uploadCloud.uploadOnCloudinary(image.path);
+
+    if (!response) {
+      res.json(400).json({ message: "Error While Connecting to Cloudinary" });
+    }
+  }
+  let updatedData = {
+    title,
+    description,
+    projectId: parseInt(projectId),
+    assignedUsers: {
+      set: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
+    },
+  };
+  if (response.url) {
+    updatedData.image = response.url;
+  }
   const newIssue = await prisma.issue.update({
     where: {
       id: parseInt(id),
     },
-    data: {
-      title,
-      description,
-      projectId: parseInt(projectId),
-      status: status,
-      assignedUsers: {
-        set: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
-      },
-    },
+    data: updatedData,
   });
   if (newIssue) {
     res.status(200).json({ message: newIssue, success: true });
@@ -113,6 +127,9 @@ router.post("/getIssueByProjectId", async (req, res) => {
           include: {
             assignedUsers: true,
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         },
       },
     });
@@ -128,6 +145,9 @@ router.post("/getIssueByProjectId", async (req, res) => {
           },
           include: {
             assignedUsers: true,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         },
       },
@@ -223,6 +243,22 @@ router.post("/getIssueById", async (req, res) => {
     );
     issue.assignedUsers = final;
     res.status(200).json({ message: issue, success: true });
+  }
+});
+
+router.post("/changeStatus", async (req, res) => {
+  const { id, status } = req.body;
+
+  let updatedStatus = await prisma.issue.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      status,
+    },
+  });
+  if (updatedStatus) {
+    res.status(200).json({ message: updatedStatus, success: true });
   }
 });
 

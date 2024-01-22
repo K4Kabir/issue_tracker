@@ -81,6 +81,19 @@ const Create = () => {
     }
   };
 
+  const handleAction = async function (type) {
+    let response = await jwtAxios.post("/Issue/changeStatus", {
+      id: state.issueId,
+      status: type,
+    });
+    if (response.data.success) {
+      toast.success("Status Changed Successfully");
+      getById();
+    } else {
+      toast.error(response.data.message);
+    }
+  };
+
   useEffect(() => {
     const getAllUsers = function () {
       jwtAxios
@@ -101,24 +114,25 @@ const Create = () => {
     getAllUsers();
   }, []);
 
-  useEffect(() => {
-    const getById = async function () {
-      let response = await jwtAxios.post("/Issue/getIssueById", {
-        id: state.issueId,
-      });
-      if (response.data.success) {
-        setData(response.data.message);
-        let temp = [];
-        response.data.message.assignedUsers.map((el) => {
-          temp.push({
-            label: `${el.username}  (${el.role})`,
-            id: el.id,
-          });
-          setSelected(temp);
-          setFileUrl(response.data.message.image);
+  const getById = async function () {
+    let response = await jwtAxios.post("/Issue/getIssueById", {
+      id: state.issueId,
+    });
+    if (response.data.success) {
+      setData(response.data.message);
+      let temp = [];
+      response.data.message.assignedUsers.map((el) => {
+        temp.push({
+          label: `${el.username}  (${el.role})`,
+          id: el.id,
         });
-      }
-    };
+        setSelected(temp);
+        setFileUrl(response.data.message.image);
+      });
+    }
+  };
+
+  useEffect(() => {
     if (state.mode == "update" || state.mode == "view") {
       getById();
     }
@@ -133,7 +147,13 @@ const Create = () => {
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Chip
               label={data.status}
-              color={data.status == "PENDING" ? "error" : "primary"}
+              color={
+                data.status == "PENDING"
+                  ? "error"
+                  : data.status == "REOPENED"
+                  ? "warning"
+                  : "primary"
+              }
             />
           </Box>
         )}
@@ -264,12 +284,25 @@ const Create = () => {
                 ? "Update"
                 : ""}
             </Button>
-            <Button color="success" variant="outlined">
-              Mark As Close
-            </Button>
-            <Button color="warning" variant="outlined">
-              Mark As Reopen
-            </Button>
+            {state.mode !== "add" && (
+              <>
+                <Button
+                  onClick={() => handleAction("CLOSED")}
+                  color="success"
+                  variant="outlined"
+                >
+                  Mark As Close
+                </Button>
+                {}
+                <Button
+                  onClick={() => handleAction("REOPENED")}
+                  color="warning"
+                  variant="outlined"
+                >
+                  Mark As Reopen
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
       </Paper>
