@@ -2,20 +2,35 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { PrismaClient } = require("@prisma/client");
 const jwt = require("jsonwebtoken");
+const upload = require("../middleware/multer.middleware");
+const uploadCloud = require("../utils/Cloudinary");
 
 const router = express.Router();
 
 router.use(bodyParser.json());
 const prisma = new PrismaClient();
 
-router.post("/createIssue", async (req, res) => {
+router.post("/createIssue", upload.single("image"), async (req, res) => {
   const { title, description, projectId, assignedUsers } = req.body;
+
+  const image = req.file;
+  let response = {
+    url: null,
+  };
+  if (req.file !== undefined) {
+    response = await uploadCloud.uploadOnCloudinary(image.path);
+
+    if (!response) {
+      res.json(400).json({ message: "Error While Connecting to Cloudinary" });
+    }
+  }
 
   const newIssue = await prisma.issue.create({
     data: {
       title,
       description,
       projectId: parseInt(projectId),
+      image: response.url,
       assignedUsers: {
         connect: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
       },
@@ -39,12 +54,7 @@ router.post("/updateIssue", async (req, res) => {
       projectId: parseInt(projectId),
       status: status,
       assignedUsers: {
-        connect: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
-      },
-      disconnect: {
-        id: {
-          notIn: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
-        },
+        set: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
       },
     },
   });

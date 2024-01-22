@@ -37,7 +37,7 @@ const Create = () => {
     setFileUrl("");
   };
 
-  const handleSave = async function () {
+  const handleSave = async function (type) {
     let url = "";
     if (state.mode == "add") {
       url = "/Issue/createIssue";
@@ -61,7 +61,15 @@ const Create = () => {
       formData.append("image", file);
       formData.append("id", state.issueId);
     }
-    let response = await jwtAxios.post(url, formData);
+    let headers = {};
+    if (file !== null && file !== undefined) {
+      headers["content-type"] = file.type;
+    }
+    let response = await jwtAxios(url, {
+      method: "POST",
+      data: formData,
+      headers: headers,
+    });
     if (response.data.success) {
       toast.success(
         state.mode == "add"
@@ -72,8 +80,6 @@ const Create = () => {
       toast.error(response.data.message);
     }
   };
-
-  console.log(selected, "SELECTED");
 
   useEffect(() => {
     const getAllUsers = function () {
@@ -109,6 +115,7 @@ const Create = () => {
             id: el.id,
           });
           setSelected(temp);
+          setFileUrl(response.data.message.image);
         });
       }
     };
@@ -116,6 +123,8 @@ const Create = () => {
       getById();
     }
   }, [state.mode]);
+
+  console.log(file, "FILEs");
 
   return (
     <Box sx={{ p: 8 }}>
