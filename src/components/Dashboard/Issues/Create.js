@@ -8,11 +8,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import jwtAxios from "../../../libs/jwtAxios/jwtAxios";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "sonner";
+import { User } from "../../../libs/context/UserContext";
 
 const Create = () => {
   const { state } = useLocation();
@@ -21,6 +22,9 @@ const Create = () => {
   const [file, setFile] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [data, setData] = useState({});
+  const { user } = useContext(User);
+
+  console.log(user, "USER");
 
   const handleInput = (e) => {
     let name = e.target.name;
@@ -60,6 +64,7 @@ const Create = () => {
       formData.append("assignedUsers", JSON.stringify(result));
       formData.append("image", file);
       formData.append("id", state.issueId);
+      formData.append("status", "PENDING");
     }
     let headers = {};
     if (file !== null && file !== undefined) {
@@ -284,23 +289,35 @@ const Create = () => {
                 ? "Update"
                 : ""}
             </Button>
-            {state.mode !== "add" && (
+            {state.mode !== "add" && data?.status !== "CLOSED" && (
               <>
-                <Button
-                  onClick={() => handleAction("CLOSED")}
-                  color="success"
-                  variant="outlined"
-                >
-                  Mark As Close
-                </Button>
-                {}
-                <Button
-                  onClick={() => handleAction("REOPENED")}
-                  color="warning"
-                  variant="outlined"
-                >
-                  Mark As Reopen
-                </Button>
+                {user?.role == "Tester" || user.role == "ADMIN" ? (
+                  <>
+                    <Button
+                      onClick={() => handleAction("CLOSED")}
+                      color="success"
+                      variant="outlined"
+                    >
+                      Mark As Close
+                    </Button>
+
+                    <Button
+                      onClick={() => handleAction("REOPENED")}
+                      color="warning"
+                      variant="outlined"
+                    >
+                      Mark As Reopen
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    color="success"
+                    onClick={() => handleAction("RESOLVED")}
+                    variant="contained"
+                  >
+                    Mark As Resolved
+                  </Button>
+                )}
               </>
             )}
           </Box>

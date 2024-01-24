@@ -62,14 +62,8 @@ const Home = () => {
                       </Typography>
                       <Chip
                         sx={{ mt: 3 }}
-                        label={
-                          (el?.project.issues.length || 0) +
-                          " " +
-                          "Issues Found"
-                        }
-                        color={
-                          el?.project.issues.length == 0 ? "success" : "error"
-                        }
+                        label={(el?.project.count || 0) + " " + "Issues Found"}
+                        color={el?.project.count == 0 ? "success" : "error"}
                       />
                     </CardContent>
                   </CardActionArea>
