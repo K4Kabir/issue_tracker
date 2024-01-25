@@ -10,6 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -18,6 +19,7 @@ import jwtAxios from "../../../libs/jwtAxios/jwtAxios";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import DeleteModal from "../Modals/Delete";
+import Filter from "../../Filter";
 
 const Issues = () => {
   const [page, setPage] = useState(0);
@@ -29,6 +31,8 @@ const Issues = () => {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState("");
   const [selection, setSelection] = useState([]);
+
+  console.log(selection, "s");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -89,9 +93,21 @@ const Issues = () => {
       </Box>
       <Box sx={{ p: 5 }}>
         <Box>
-          <Typography color={"#000000de"} variant="h4" gutterBottom>
+          <Typography variant="h5" sx={{ mb: 2, textDecoration: "underline" }}>
             {projectName.name} {"-"} {projectName.description}
           </Typography>
+        </Box>
+        <Box>
+          <Filter
+            data={[
+              { name: "title", type: "text", title: "Title" },
+              { name: "title", type: "text", title: "Title" },
+              { name: "title", type: "text", title: "Title" },
+            ]}
+            filterData={(fm) => {
+              console.log(fm);
+            }}
+          />
         </Box>
         <TableContainer
           sx={{ border: "1px solid black", borderRadius: "20px" }}
@@ -99,7 +115,22 @@ const Issues = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
+                <TableCell>
+                  <input
+                    onClick={(e) => {
+                      if (!e.target.checked) {
+                        setSelection([]);
+                      } else {
+                        let tem = [];
+                        issues.map((i) => {
+                          tem.push(i.id);
+                        });
+                        setSelection(tem);
+                      }
+                    }}
+                    type="checkbox"
+                  />
+                </TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Image</TableCell>
@@ -126,6 +157,7 @@ const Issues = () => {
                               setSelection((prev) => [...prev, el.id]);
                             }
                           }}
+                          checked={selection.includes(el.id)}
                           type="checkbox"
                         />
                       </TableCell>
