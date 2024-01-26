@@ -40,7 +40,7 @@ const Home = () => {
         <Grid container spacing={2}>
           {projects.map((el, index) => {
             return (
-              <Grid item xs={3}>
+              <Grid key={index} item xs={3}>
                 <Card
                   onClick={() => navigate(`/project/${el.projectId}`)}
                   key={index}

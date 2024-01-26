@@ -7,7 +7,9 @@ export const User = createContext();
 const UserContext = ({ children }) => {
   console.log(children);
   const [user, setUser] = useState(null);
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(
+    localStorage.getItem("theme") ? localStorage.getItem("theme") : true
+  );
 
   useEffect(() => {
     let token = localStorage.getItem("token");

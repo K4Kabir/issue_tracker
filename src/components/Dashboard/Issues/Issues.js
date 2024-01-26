@@ -32,7 +32,9 @@ const Issues = () => {
   const [id, setId] = useState("");
   const [selection, setSelection] = useState([]);
 
-  console.log(selection, "s");
+  const filter = (data) => {
+    console.log(data);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -101,12 +103,20 @@ const Issues = () => {
           <Filter
             data={[
               { name: "title", type: "text", title: "Title" },
-              { name: "title", type: "text", title: "Title" },
-              { name: "title", type: "text", title: "Title" },
+              { name: "description", type: "text", title: "Description" },
+              {
+                name: "status",
+                type: "select",
+                title: "Status",
+                options: [
+                  { title: "Pending", value: "PENDING" },
+                  { title: "Closed", value: "CLOSED" },
+                  { title: "Reopened", value: "REOPENED" },
+                  { title: "Resolved", value: "RESOLVED" },
+                ],
+              },
             ]}
-            filterData={(fm) => {
-              console.log(fm);
-            }}
+            filterData={filter}
           />
         </Box>
         <TableContainer

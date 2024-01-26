@@ -14,9 +14,10 @@ import Create from "./components/Dashboard/Issues/Create";
 
 function App() {
   const { dark } = useContext(User);
+  console.log(typeof localStorage.getItem("theme"));
   const darkTheme = createTheme({
     palette: {
-      mode: dark ? "dark" : "light",
+      mode: localStorage.getItem("theme") == "true" ? "dark" : "light",
     },
   });
   return (

@@ -10,7 +10,10 @@ const ThemeButton = () => {
     <>
       <IconButton
         sx={{ ml: 1 }}
-        onClick={() => setDark((prev) => !prev)}
+        onClick={() => {
+          setDark((prev) => !prev);
+          localStorage.setItem("theme", dark);
+        }}
         color="inherit"
       >
         {dark ? <Brightness7Icon /> : <Brightness4Icon />}
