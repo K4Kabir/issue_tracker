@@ -172,6 +172,19 @@ router.get("/getAssingedProjects", async (req, res) => {
     });
   }
   if (data) {
+    data.forEach((el) => {
+      let issueCount = 0;
+      el.project.issues.forEach((i) => {
+        if (
+          i.status == "PENDING" ||
+          i.status == "REOPENED" ||
+          i.status == "RESOLVED"
+        ) {
+          issueCount += 1;
+        }
+      });
+      el.project["count"] = issueCount;
+    });
     res.status(200).json({ message: data, success: true });
   }
 });

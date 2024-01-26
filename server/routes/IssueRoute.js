@@ -42,7 +42,7 @@ router.post("/createIssue", upload.single("image"), async (req, res) => {
 });
 
 router.post("/updateIssue", upload.single("image"), async (req, res) => {
-  const { title, description, projectId, assignedUsers, id } = req.body;
+  const { title, description, projectId, assignedUsers, id, status } = req.body;
 
   const image = req.file;
   let response = {
@@ -58,6 +58,7 @@ router.post("/updateIssue", upload.single("image"), async (req, res) => {
   let updatedData = {
     title,
     description,
+    status,
     projectId: parseInt(projectId),
     assignedUsers: {
       set: JSON.parse(assignedUsers).map((userId) => ({ id: userId })),
