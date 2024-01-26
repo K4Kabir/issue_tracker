@@ -7,6 +7,7 @@ export const User = createContext();
 const UserContext = ({ children }) => {
   console.log(children);
   const [user, setUser] = useState(null);
+  const [dark, setDark] = useState(true);
 
   useEffect(() => {
     let token = localStorage.getItem("token");
@@ -47,7 +48,9 @@ const UserContext = ({ children }) => {
   };
 
   return (
-    <User.Provider value={{ SignIn, Logout, getUserDetails, user }}>
+    <User.Provider
+      value={{ SignIn, Logout, getUserDetails, user, dark, setDark }}
+    >
       {children}
     </User.Provider>
   );

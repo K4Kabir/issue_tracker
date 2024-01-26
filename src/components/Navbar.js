@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { User } from "../libs/context/UserContext";
 import { Avatar, Box, Button, Link } from "@mui/material";
+import ThemeButton from "./ThemeButton";
 
 const Navbar = () => {
   const { user, Logout } = useContext(User);
@@ -24,6 +25,7 @@ const Navbar = () => {
           Logout
         </Button>
         <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+        <ThemeButton />
       </Box>
     </Box>
   );

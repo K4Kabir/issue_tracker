@@ -89,7 +89,7 @@ const Issues = () => {
       </Box>
       <Box sx={{ p: 5 }}>
         <Box>
-          <Typography color={"#000000de"} variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             {projectName.name} {"-"} {projectName.description}
           </Typography>
         </Box>

@@ -222,31 +222,33 @@ const Create = () => {
               sx={{ width: "50%" }}
               type="file"
             />
-            <Box
-              sx={{
-                position: "relative",
-                width: "200px",
-                height: "200px",
-                border: "1px solid black",
-                borderRadius: "50%",
-                mr: "15%",
-              }}
-            >
-              {fileUrl && (
-                <IconButton
-                  onClick={clerFiles}
-                  sx={{ position: "absolute", right: -30 }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              )}
-              <img
-                width={200}
-                height={200}
-                style={{ objectFit: "fill", borderRadius: "50%" }}
-                src={fileUrl}
-              />
-            </Box>
+            {fileUrl && (
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "200px",
+                  height: "200px",
+                  border: "1px solid black",
+                  borderRadius: "50%",
+                  mr: "15%",
+                }}
+              >
+                {fileUrl && (
+                  <IconButton
+                    onClick={clerFiles}
+                    sx={{ position: "absolute", right: -30 }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                )}
+                <img
+                  width={200}
+                  height={200}
+                  style={{ objectFit: "fill", borderRadius: "50%" }}
+                  src={fileUrl}
+                />
+              </Box>
+            )}
           </Box>
           <Box sx={{ mt: 2 }}>
             <Autocomplete
