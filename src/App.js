@@ -6,18 +6,18 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Register from "./components/Auth/Register";
 import ProjectManagement from "./components/Dashboard/ProjectManagement";
-import { useContext, useState } from "react";
-import UserContext, { User } from "./libs/context/UserContext";
+import { useContext } from "react";
+import { User } from "./libs/context/UserContext";
 import Loader from "./components/Loader";
 import Issues from "./components/Dashboard/Issues/Issues";
 import Create from "./components/Dashboard/Issues/Create";
 
 function App() {
   const { dark } = useContext(User);
-  console.log(typeof localStorage.getItem("theme"));
+  console.log(dark, "DARK");
   const darkTheme = createTheme({
     palette: {
-      mode: localStorage.getItem("theme") == "true" ? "dark" : "light",
+      mode: dark ? "dark" : "light",
     },
   });
   return (

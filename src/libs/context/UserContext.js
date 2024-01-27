@@ -3,13 +3,20 @@ import jwtAxios from "../jwtAxios/jwtAxios";
 import { setAuthToken } from "../jwtAxios/jwtAxios";
 
 export const User = createContext();
+const theme = JSON.parse(localStorage.getItem("theme"));
 
 const UserContext = ({ children }) => {
-  console.log(children);
   const [user, setUser] = useState(null);
-  const [dark, setDark] = useState(
-    localStorage.getItem("theme") ? localStorage.getItem("theme") : true
-  );
+  const [dark, setDark] = useState(theme);
+
+  useEffect(() => {
+    const localTheme = localStorage.getItem("theme");
+
+    if (JSON.parse(localTheme) == null) {
+      localStorage.setItem("theme", true);
+      setDark(true);
+    }
+  }, []);
 
   useEffect(() => {
     let token = localStorage.getItem("token");
