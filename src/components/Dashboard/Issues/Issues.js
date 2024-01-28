@@ -20,6 +20,12 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import DeleteModal from "../Modals/Delete";
 import Filter from "../../Filter";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:8080", {
+  transports: ["websocket"],
+  withCredentials: true,
+});
 
 const Issues = () => {
   const [page, setPage] = useState(0);
@@ -31,6 +37,27 @@ const Issues = () => {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState("");
   const [selection, setSelection] = useState([]);
+
+  const getAllIssues = async () => {
+    let response = await jwtAxios.post("/Issue/getIssueByProjectId", {
+      projectId: parseInt(projectId),
+    });
+    if (response.data.success) {
+      setIssues(response.data.message.issues);
+      setProjectName({
+        name: response.data.message.name,
+        description: response.data.message.description,
+      });
+    } else {
+      setIssues([]);
+    }
+  };
+
+  useEffect(() => {
+    socket.on("IssueDeleted", () => {
+      getAllIssues();
+    });
+  }, []);
 
   const filter = (data) => {
     console.log(data);
@@ -46,21 +73,6 @@ const Issues = () => {
   };
 
   useEffect(() => {
-    const getAllIssues = async () => {
-      let response = await jwtAxios.post("/Issue/getIssueByProjectId", {
-        projectId: parseInt(projectId),
-      });
-      if (response.data.success) {
-        setIssues(response.data.message.issues);
-        setProjectName({
-          name: response.data.message.name,
-          description: response.data.message.description,
-        });
-      } else {
-        setIssues([]);
-      }
-    };
-
     getAllIssues();
   }, []);
 
