@@ -9,14 +9,16 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
 import jwtAxios from "../../libs/jwtAxios/jwtAxios";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../libs/context/UserContext";
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
+  const { userOnline, setUserOnline } = useContext(User);
 
   useEffect(() => {
     const getProjects = async function () {
@@ -36,6 +38,9 @@ const Home = () => {
 
   return (
     <div>
+      {userOnline.map((el, index) => {
+        return <li key={index}>{el}</li>;
+      })}
       <Box sx={{ p: 10 }}>
         <Grid container spacing={2}>
           {projects.map((el, index) => {

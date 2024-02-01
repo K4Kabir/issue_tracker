@@ -10,13 +10,15 @@ import { Toaster } from "sonner";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const auth = localStorage.getItem("token");
 root.render(
-  <React.StrictMode>
+  <>
+    {/* <React.StrictMode> */}
     <Toaster richColors />
     <UserContext>
       {auth ? <Navbar /> : ""}
       <App />
     </UserContext>
-  </React.StrictMode>
+    {/*   </React.StrictMode> */}
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function

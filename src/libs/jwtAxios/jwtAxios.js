@@ -1,5 +1,11 @@
 import axios from "axios";
 import { BaseUrl } from "./baseUrl";
+import io from "socket.io-client";
+
+export const socket = io("http://localhost:8080", {
+  transports: ["websocket"],
+  withCredentials: true,
+});
 
 const jwtAxios = axios.create({
   baseURL: BaseUrl,

@@ -8,10 +8,10 @@ const theme = JSON.parse(localStorage.getItem("theme"));
 const UserContext = ({ children }) => {
   const [user, setUser] = useState(null);
   const [dark, setDark] = useState(theme);
+  const [userOnline, setUserOnline] = useState([]);
 
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
-
     if (JSON.parse(localTheme) == null) {
       localStorage.setItem("theme", true);
       setDark(true);
@@ -51,14 +51,28 @@ const UserContext = ({ children }) => {
     }
   };
 
-  const Logout = () => {
-    localStorage.clear();
-    window.location.reload();
+  const Logout = async () => {
+    let response = await jwtAxios.post("/User/logout", {
+      username: user?.username,
+    });
+    if (response.data.success) {
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   return (
     <User.Provider
-      value={{ SignIn, Logout, getUserDetails, user, dark, setDark }}
+      value={{
+        SignIn,
+        Logout,
+        getUserDetails,
+        user,
+        dark,
+        setDark,
+        userOnline,
+        setUserOnline,
+      }}
     >
       {children}
     </User.Provider>

@@ -6,12 +6,12 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Register from "./components/Auth/Register";
 import ProjectManagement from "./components/Dashboard/ProjectManagement";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { User } from "./libs/context/UserContext";
 import Loader from "./components/Loader";
 import Issues from "./components/Dashboard/Issues/Issues";
 import Create from "./components/Dashboard/Issues/Create";
-
+import { socket } from "./libs/jwtAxios/jwtAxios";
 function App() {
   const { dark } = useContext(User);
   console.log(dark, "DARK");
@@ -20,6 +20,17 @@ function App() {
       mode: dark ? "dark" : "light",
     },
   });
+
+  useEffect(() => {
+    socket.on("Userjoined", (user) => {
+      console.log(user);
+    });
+
+    socket.on("Userdisconncted", (user) => {
+      console.log(user);
+    });
+  }, []);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />

@@ -264,6 +264,7 @@ const issueRouteWithIo = (io) => {
       },
     });
     if (updatedStatus) {
+      io.emit("issueStatusChanged");
       res.status(200).json({ message: updatedStatus, success: true });
     }
   });

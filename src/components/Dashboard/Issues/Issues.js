@@ -20,12 +20,7 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import DeleteModal from "../Modals/Delete";
 import Filter from "../../Filter";
-import io from "socket.io-client";
-
-const socket = io("http://localhost:8080", {
-  transports: ["websocket"],
-  withCredentials: true,
-});
+import { socket } from "../../../libs/jwtAxios/jwtAxios";
 
 const Issues = () => {
   const [page, setPage] = useState(0);
@@ -55,6 +50,9 @@ const Issues = () => {
 
   useEffect(() => {
     socket.on("IssueDeleted", () => {
+      getAllIssues();
+    });
+    socket.on("issueStatusChanged", () => {
       getAllIssues();
     });
   }, []);

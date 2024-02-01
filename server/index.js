@@ -16,18 +16,25 @@ const s = http.createServer(server, {
 const io = socketIO(s);
 
 // Set up a connection event
+let rooms = [];
 io.on("connection", (socket) => {
   console.log(`A user connected with room id ${socket.id}`);
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
+
+  socket.on("userLoggedout", (data) => {
+    let result = rooms.filter((f) => f !== data);
+    rooms = result;
+    socket.emit("LoggedOutSuccess", rooms);
+  });
 });
 
 server.use(cors());
 
 // routes
-server.use("/api/User", UserRoutes);
+server.use("/api/User", UserRoutes(io));
 server.use("/api/Project", ProjectRoutes);
 server.use("/api/Issue", IssueRoutes(io));
 
