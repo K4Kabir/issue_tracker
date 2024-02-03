@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import UserContext from "./libs/context/UserContext";
 import Navbar from "./components/Navbar";
 import { Toaster } from "sonner";
+import TotalOnline from "./components/TotalOnline";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const auth = localStorage.getItem("token");
@@ -15,6 +16,7 @@ root.render(
     <Toaster richColors />
     <UserContext>
       {auth ? <Navbar /> : ""}
+      {auth ? <TotalOnline /> : ""}
       <App />
     </UserContext>
     {/*   </React.StrictMode> */}

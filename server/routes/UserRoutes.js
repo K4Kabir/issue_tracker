@@ -64,12 +64,7 @@ const UserWithIo = (io) => {
       "KABIR",
       { expiresIn: "1h" }
     );
-    if (rooms.includes(username)) {
-      io.emit("Userjoined", rooms);
-    } else {
-      rooms.push(username);
-      io.emit("Userjoined", rooms);
-    }
+
     res.status(200).json({ message: token, success: true });
   });
 
@@ -101,6 +96,12 @@ const UserWithIo = (io) => {
         id: true,
       },
     });
+    if (rooms.includes(checkToken.data)) {
+      io.emit("Userjoined", rooms);
+    } else {
+      rooms.push(checkToken.data);
+      io.emit("Userjoined", rooms);
+    }
     res.status(200).json({ message: user, success: true });
   });
 

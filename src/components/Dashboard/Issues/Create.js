@@ -81,6 +81,7 @@ const Create = () => {
           ? "Issue assinged successfully"
           : "Update Successfully"
       );
+      getById();
     } else {
       toast.error(response.data.message);
     }
@@ -296,6 +297,7 @@ const Create = () => {
                 {user?.role == "Tester" || user.role == "ADMIN" ? (
                   <>
                     <Button
+                      disabled={data.status == "CLOSED"}
                       onClick={() => handleAction("CLOSED")}
                       color="success"
                       variant="outlined"
@@ -304,6 +306,7 @@ const Create = () => {
                     </Button>
 
                     <Button
+                      disabled={data.status == "REOPENED"}
                       onClick={() => handleAction("REOPENED")}
                       color="warning"
                       variant="outlined"
@@ -313,6 +316,7 @@ const Create = () => {
                   </>
                 ) : (
                   <Button
+                    disabled={data.status == "RESOLVED"}
                     color="success"
                     onClick={() => handleAction("RESOLVED")}
                     variant="contained"

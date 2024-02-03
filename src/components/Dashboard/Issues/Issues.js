@@ -33,9 +33,10 @@ const Issues = () => {
   const [id, setId] = useState("");
   const [selection, setSelection] = useState([]);
 
-  const getAllIssues = async () => {
+  const getAllIssues = async (data) => {
     let response = await jwtAxios.post("/Issue/getIssueByProjectId", {
       projectId: parseInt(projectId),
+      title: data?.title || "",
     });
     if (response.data.success) {
       setIssues(response.data.message.issues);
@@ -48,6 +49,11 @@ const Issues = () => {
     }
   };
 
+  const filter = (data) => {
+    console.log(data);
+    getAllIssues(data);
+  };
+
   useEffect(() => {
     socket.on("IssueDeleted", () => {
       getAllIssues();
@@ -56,10 +62,6 @@ const Issues = () => {
       getAllIssues();
     });
   }, []);
-
-  const filter = (data) => {
-    console.log(data);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

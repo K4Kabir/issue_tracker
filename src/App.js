@@ -13,7 +13,7 @@ import Issues from "./components/Dashboard/Issues/Issues";
 import Create from "./components/Dashboard/Issues/Create";
 import { socket } from "./libs/jwtAxios/jwtAxios";
 function App() {
-  const { dark } = useContext(User);
+  const { dark, setUserOnline } = useContext(User);
   console.log(dark, "DARK");
   const darkTheme = createTheme({
     palette: {
@@ -23,11 +23,11 @@ function App() {
 
   useEffect(() => {
     socket.on("Userjoined", (user) => {
-      console.log(user);
+      setUserOnline(user);
     });
 
     socket.on("Userdisconncted", (user) => {
-      console.log(user);
+      setUserOnline(user);
     });
   }, []);
 

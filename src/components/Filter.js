@@ -22,9 +22,6 @@ const Filter = ({ data, filterData }) => {
       [name]: value,
     });
   };
-  useEffect(() => {
-    filterData(formData);
-  }, [formData]);
   return (
     <Paper
       sx={{ p: 3, mb: 2, display: "flex", gap: "10px", alignItems: "center" }}
@@ -78,7 +75,7 @@ const Filter = ({ data, filterData }) => {
       })}
 
       <Button variant="contained">
-        <SearchIcon />
+        <SearchIcon onClick={() => filterData(formData)} />
       </Button>
       <Button onClick={() => setFormData({})} variant="contained">
         <ReplayIcon />

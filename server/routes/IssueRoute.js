@@ -95,7 +95,7 @@ const issueRouteWithIo = (io) => {
   });
 
   router.post("/getIssueByProjectId", async (req, res) => {
-    const { projectId } = req.body;
+    const { projectId, title, description, status } = req.body;
 
     const token = req.header("authorization");
 
@@ -158,6 +158,7 @@ const issueRouteWithIo = (io) => {
         },
       });
     }
+
     if (Issue) {
       res.status(200).json({ message: Issue, success: true });
     }
